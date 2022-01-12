@@ -80,7 +80,8 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     saveButton.getElement().setProperty("title", "Save (CTRL + S)");
     saveButton.addClickListener(e -> {
-      if (editor.isEmpty()) {
+      String text = editor.getValue();
+      if (text != null && !text.trim().equalsIgnoreCase("")) {
         Notification n = new Notification();
         n.addThemeVariants(NotificationVariant.LUMO_ERROR);
         n.setText("Please submit some text, before saving!");
@@ -91,7 +92,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
       progressDialog.open();
       Paste paste = new Paste(
           UUID.randomUUID().toString(),
-          editor.getValue(),
+          text,
           editor.getTheme(),
           editor.getMode(),
           LocalDate.now().format(Date.FORMATTER)
