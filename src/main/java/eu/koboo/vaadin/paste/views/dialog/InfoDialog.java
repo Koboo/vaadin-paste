@@ -13,7 +13,7 @@ import eu.koboo.vaadin.paste.utility.Badge;
 public class InfoDialog extends Dialog {
 
   public InfoDialog() {
-    setMaxWidth("400px");
+    setMaxWidth("700px");
     setWidthFull();
 
     H2 title = new H2("Info");

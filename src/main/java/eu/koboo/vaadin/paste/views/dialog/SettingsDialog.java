@@ -16,7 +16,7 @@ import eu.koboo.vaadin.paste.utility.Cookies;
 public class SettingsDialog extends Dialog {
 
   public SettingsDialog(AceEditor editor) {
-    setMaxWidth("400px");
+    setMaxWidth("700px");
     setWidthFull();
     setCloseOnEsc(true);
     setCloseOnOutsideClick(true);
