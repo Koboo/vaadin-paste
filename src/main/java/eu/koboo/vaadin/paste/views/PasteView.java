@@ -24,6 +24,7 @@ import de.f0rce.ace.enums.AceTheme;
 import eu.koboo.vaadin.paste.repository.Paste;
 import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
+import eu.koboo.vaadin.paste.utility.Cookies;
 import eu.koboo.vaadin.paste.utility.Date;
 import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.utility.Param;
@@ -132,6 +133,15 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
 
   @Override
   public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+    try {
+      AceMode mode = AceMode.valueOf(Cookies.getCookieValue("PREF_MODE"));
+      editor.setMode(mode);
+      AceTheme theme = AceTheme.valueOf(Cookies.getCookieValue("PREF_THEME"));
+      editor.setTheme(theme);
+    } catch (Exception e) {
+      // Silent ignore
+    }
+
     String id = Param.getParam(afterNavigationEvent, "p");
     if(id == null) {
       return;
