@@ -81,16 +81,25 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     saveButton.getElement().setProperty("title", "Save (CTRL + S)");
     saveButton.addClickListener(e -> {
+      progressDialog.open();
+      try {
+        // Here it needs a short sleep, because AceEditor needs time for something.
+        // Further investigation planned. Pretty dirty work-around, but now it works. :(
+        Thread.sleep(700);
+      } catch (InterruptedException exc) {
+        // Silent ignore
+      }
       String text = editor.getValue();
-      if (text == null || text.trim().equalsIgnoreCase("")) {
+      if (text == null) {
         Notification n = new Notification();
         n.addThemeVariants(NotificationVariant.LUMO_ERROR);
         n.setText("Please submit some text, before saving!");
         n.setDuration(2500);
         n.open();
+        progressBar.setIndeterminate(false);
+        progressBar.setValue(1);
         return;
       }
-      progressDialog.open();
       Paste paste = new Paste(
           UUID.randomUUID().toString(),
           Base64.getEncoder().encodeToString(text.getBytes()),
