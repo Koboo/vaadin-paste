@@ -24,6 +24,7 @@ import eu.koboo.vaadin.paste.repository.Paste;
 import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
 import eu.koboo.vaadin.paste.utility.Param;
+import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
 import java.util.Optional;
 
 @PageTitle("Show")
@@ -72,7 +73,6 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     editButton.addClickListener(e -> UI.getCurrent().navigate("", Param.with("p", paste.getPasteId()).build()));
     Shortcuts.addShortcutListener(this, editButton::clickInClient, Key.KEY_E, KeyModifier.CONTROL);
 
-
     Button copyButton = new Button(VaadinIcon.COPY.create());
     copyButton.addClassName("button");
     copyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -80,10 +80,18 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     copyButton.addClickListener(e -> clipboard.copyCode(paste, null));
     Shortcuts.addShortcutListener(this, editButton::clickInClient, Key.KEY_C, KeyModifier.CONTROL);
 
+    Button settingsButton = new Button(VaadinIcon.COG.create());
+    settingsButton.addClassName("button");
+    settingsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    settingsButton.getElement().setProperty("title", "Settings (CTRL + ALT + S)");
+    SettingsDialog settingsDialog = new SettingsDialog(editor);
+    settingsButton.addClickListener(e -> settingsDialog.open());
+    Shortcuts.addShortcutListener(this, settingsButton::clickInClient, Key.KEY_B, KeyModifier.CONTROL);
+
     HorizontalLayout menuLayout = new HorizontalLayout();
     menuLayout.setSpacing(false);
     menuLayout.addClassName("menu-layout");
-    menuLayout.add(newButton, editButton, copyButton);
+    menuLayout.add(newButton, editButton, copyButton, settingsButton);
 
     add(menuLayout);
     addAndExpand(editor);
