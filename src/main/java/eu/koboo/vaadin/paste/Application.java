@@ -17,7 +17,11 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 @SpringBootApplication
 @Theme(value = "vaadinpaste", variant = Lumo.DARK)
-@PWA(name = "Vaadin Paste", shortName = "Vaadin Paste", offlineResources = {"images/logo.png"})
+@PWA(name = "VaadinPaste",
+    shortName = "VaadinPaste",
+    description = "Lightweight PasteService with Vaadin and MongoDB",
+    iconPath = "images/logo.png",
+    offlineResources = {"images/logo.png"})
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
