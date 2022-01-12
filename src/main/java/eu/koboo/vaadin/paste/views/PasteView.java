@@ -30,6 +30,7 @@ import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.utility.Param;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -81,7 +82,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     saveButton.getElement().setProperty("title", "Save (CTRL + S)");
     saveButton.addClickListener(e -> {
       String text = editor.getValue();
-      if (text != null && !text.trim().equalsIgnoreCase("")) {
+      if (text == null || text.trim().equalsIgnoreCase("")) {
         Notification n = new Notification();
         n.addThemeVariants(NotificationVariant.LUMO_ERROR);
         n.setText("Please submit some text, before saving!");
@@ -92,7 +93,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
       progressDialog.open();
       Paste paste = new Paste(
           UUID.randomUUID().toString(),
-          text,
+          Base64.getEncoder().encodeToString(text.getBytes()),
           editor.getTheme(),
           editor.getMode(),
           LocalDate.now().format(Date.FORMATTER)

@@ -25,6 +25,8 @@ import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
 import eu.koboo.vaadin.paste.utility.Param;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Optional;
 
 @PageTitle("Show")
@@ -110,7 +112,8 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
       return;
     }
     paste = optional.get();
-    editor.setValue(paste.getText());
+    String text = new String(Base64.getDecoder().decode(paste.getText()), StandardCharsets.UTF_8);
+    editor.setValue(text);
     editor.setMode(paste.getMode());
     editor.setTheme(paste.getTheme());
   }
