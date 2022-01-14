@@ -29,6 +29,7 @@ import eu.koboo.vaadin.paste.utility.Date;
 import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.utility.Param;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.Optional;
@@ -56,7 +57,6 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     editor = new AceEditor();
     editor.setLiveAutocompletion(true);
     editor.setAutoComplete(true);
-    //editor.setWrap(true);
     editor.addClassName("ace-editor");
     editor.setTheme(AceTheme.terminal);
     editor.setMode(AceMode.java);
@@ -162,7 +162,8 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
       return;
     }
     Paste paste = optional.get();
-    editor.setValue(paste.getText());
+    String text = new String(Base64.getDecoder().decode(paste.getText()), StandardCharsets.UTF_8);
+    editor.setValue(text);
     editor.setMode(paste.getMode());
     editor.setTheme(paste.getTheme());
   }
