@@ -25,11 +25,13 @@ If you finished the build and configuration steps you can run the application th
 
 # Good to know
 
-You can get a free MongoDB Atlas Cluster. Just register [here](https://www.mongodb.com/atlas/database).
+You can get a free MongoDB Atlas Cluster. Just register an account [here](https://www.mongodb.com/atlas/database).
 
 Please note: These are only for testing or demo purposes and should not be used in production!
 
 # Links
-- [Vaadin](https://vaadin.com/) 
+- [Vaadin](https://vaadin.com/)
+- [Vaadin AceEditor](https://vaadin.com/directory/component/ace)
+- [Vaadin AceEditor GitHub](https://github.com/F0rce/ace)
 - [Spring](https://spring.io/) 
 - [MongoDB](https://www.mongodb.com/)
