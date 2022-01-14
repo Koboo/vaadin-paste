@@ -24,6 +24,7 @@ import eu.koboo.vaadin.paste.repository.Paste;
 import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
 import eu.koboo.vaadin.paste.utility.Param;
+import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -90,10 +91,18 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     settingsButton.addClickListener(e -> settingsDialog.open());
     Shortcuts.addShortcutListener(this, settingsButton::clickInClient, Key.KEY_B, KeyModifier.CONTROL);
 
+    Button infoButton = new Button(VaadinIcon.INFO_CIRCLE_O.create());
+    infoButton.addClassName("button");
+    infoButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    infoButton.getElement().setProperty("title", "Info (CTRL + I)");
+    InfoDialog infoDialog = new InfoDialog();
+    infoButton.addClickListener(e -> infoDialog.open());
+    Shortcuts.addShortcutListener(this, infoButton::clickInClient, Key.KEY_I, KeyModifier.CONTROL);
+
     HorizontalLayout menuLayout = new HorizontalLayout();
     menuLayout.setSpacing(false);
     menuLayout.addClassName("menu-layout");
-    menuLayout.add(newButton, editButton, copyButton, settingsButton);
+    menuLayout.add(newButton, editButton, copyButton, settingsButton, infoButton);
 
     add(menuLayout);
     addAndExpand(editor);

@@ -56,12 +56,13 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     editor = new AceEditor();
     editor.setLiveAutocompletion(true);
     editor.setAutoComplete(true);
-    editor.setWrap(true);
+    //editor.setWrap(true);
     editor.addClassName("ace-editor");
     editor.setTheme(AceTheme.terminal);
     editor.setMode(AceMode.java);
     editor.setInitialFocus(true);
     editor.setHighlightActiveLine(true);
+    editor.setSofttabs(true);
 
     progressDialog = new Dialog();
     progressDialog.setMaxWidth("400px");
@@ -82,37 +83,36 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     saveButton.getElement().setProperty("title", "Save (CTRL + S)");
     saveButton.addClickListener(e -> {
       progressDialog.open();
-      try {
-        // Here it needs a short sleep, because AceEditor needs time for something.
-        // Further investigation planned. Pretty dirty work-around, but now it works. :(
-        Thread.sleep(700);
-      } catch (InterruptedException exc) {
-        // Silent ignore
-      }
-      String text = editor.getValue();
-      if (text == null) {
-        Notification n = new Notification();
-        n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-        n.setText("Please submit some text, before saving!");
-        n.setDuration(2500);
-        n.open();
-        progressBar.setIndeterminate(false);
-        progressBar.setValue(1);
-        return;
-      }
-      Paste paste = new Paste(
-          UUID.randomUUID().toString(),
-          Base64.getEncoder().encodeToString(text.getBytes()),
-          editor.getTheme(),
-          editor.getMode(),
-          LocalDate.now().format(Date.FORMATTER)
-      );
-      service.getRepository().save(paste);
-      clipboard.copyCode(paste, () -> {
-        progressBar.setIndeterminate(false);
-        progressBar.setValue(1);
-        UI.getCurrent().navigate("show", Param.with("p", paste.getPasteId()).build());
-        progressDialog.close();
+      editor.sync();
+      editor.addSyncCompletedListener(syncEvent -> {
+        editor.setReadOnly(true);
+        if (editor.isEmpty()) {
+          Notification n = new Notification();
+          n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+          n.setText("Please submit some text, before saving!");
+          n.setDuration(2500);
+          n.open();
+          progressBar.setIndeterminate(false);
+          progressBar.setValue(1);
+          progressDialog.close();
+          editor.setReadOnly(false);
+          return;
+        }
+        Paste paste = new Paste(
+            UUID.randomUUID().toString(),
+            Base64.getEncoder().encodeToString(editor.getValue().getBytes()),
+            editor.getTheme(),
+            editor.getMode(),
+            LocalDate.now().format(Date.FORMATTER)
+        );
+        service.getRepository().save(paste);
+        clipboard.copyCode(paste, () -> {
+          progressBar.setIndeterminate(false);
+          progressBar.setValue(1);
+          UI.getCurrent().navigate("show", Param.with("p", paste.getPasteId()).build());
+          progressDialog.close();
+        });
+
       });
     });
     Shortcuts.addShortcutListener(this, saveButton::clickInClient, Key.KEY_S, KeyModifier.CONTROL);

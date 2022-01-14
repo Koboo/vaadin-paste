@@ -47,6 +47,15 @@ public class SettingsDialog extends Dialog {
     themeComboBox.addValueChangeListener(e -> editor.setTheme(e.getValue()));
     add(themeComboBox);
 
+    try {
+      AceMode mode = AceMode.valueOf(Cookies.getCookieValue("PREF_MODE"));
+      modeComboBox.setValue(mode);
+      AceTheme theme = AceTheme.valueOf(Cookies.getCookieValue("PREF_THEME"));
+      themeComboBox.setValue(theme);
+    } catch (Exception e) {
+      // Silent ignore
+    }
+
     Button cookieButton = new Button("Save to Cookies", VaadinIcon.CHECK.create());
     cookieButton.getStyle().set("margin-top", "1rem");
     cookieButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
@@ -60,6 +69,7 @@ public class SettingsDialog extends Dialog {
       n.setText("Settings saved to Cookies!");
       n.setDuration(2500);
       n.open();
+      close();
     });
     add(cookieButton);
 
