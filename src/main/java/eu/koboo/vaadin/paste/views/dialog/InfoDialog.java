@@ -27,7 +27,7 @@ public class InfoDialog extends Dialog {
     add(new Paragraph(new Span("Open settings  "), new Badge("CTRL + ALT + I")));
     add(new Paragraph(""));
     add(new Paragraph(
-        "Please note: The created pastes are only stored temporarily and will be deleted after 1 week. This can be adjusted when installing your own instance!"));
+        "Please note: Pastes are only stored temporarily and will be deleted after a specific amount of days. This can be adjusted when installing your own instance!"));
     add(new Paragraph(""));
     add(new Paragraph("Built by Koboo with <3"));
     add(new Paragraph(new Anchor("https://github.com/Koboo/vaadin-paste")));
