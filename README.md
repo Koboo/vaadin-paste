@@ -12,10 +12,15 @@ The build artifact is located in `target/vaadinpaste-1.0-SNAPSHOT.jar`.
 
 Now you need to set up the port and MongoDB-URI through the `paste.properties` file. This file is located in the application/project directory and looks like this:
 ````
+# Configure the webserver port of Apache Tomcat
 server.port=${PORT:<your port>}
 
-spring.data.mongodb.uri=mongodb+srv://<username>:<password>@<host[:port]>/<database>?retryWrites=true&w=majority
+# Configure MongoDB database access via URI e.g. "mongodb+srv://<username>:<password>@<host[:port]>/<database>?retryWrites=true&w=majority"
+spring.data.mongodb.uri=<mongodb-uri>
 spring.data.mongodb.database=<database-name>
+
+# Configure how long a paste remains stored.
+paste.days=14
 ````
 Just create a new file named `paste.properties` and fill the properties.
 
