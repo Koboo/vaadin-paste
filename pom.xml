@@ -5,8 +5,8 @@
     <!-- Vaadin project from https://start.vaadin.com/project/ac4767ef-9bc5-4a58-b0f5-9a575c06a04d -->
     <groupId>eu.koboo.vaadin.paste</groupId>
     <artifactId>vaadinpaste</artifactId>
-    <name>Project base for Spring Boot and Vaadin Flow</name>
-    <version>1.0-SNAPSHOT</version>
+    <name>Simple and lightweight paste-service with Spring Boot and Vaadin Flow</name>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
