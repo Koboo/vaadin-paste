@@ -23,7 +23,10 @@ import de.f0rce.ace.enums.AceTheme;
 import eu.koboo.vaadin.paste.repository.Paste;
 import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
+import eu.koboo.vaadin.paste.utility.FloatButton;
+import eu.koboo.vaadin.paste.utility.IconContextMenu;
 import eu.koboo.vaadin.paste.utility.Param;
+import eu.koboo.vaadin.paste.utility.Resolution;
 import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
 import java.nio.charset.StandardCharsets;
@@ -105,6 +108,29 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
 
     add(menuLayout);
     addAndExpand(editor);
+
+    FloatButton floatButton = new FloatButton(VaadinIcon.ELLIPSIS_DOTS_V.create());
+    IconContextMenu contextMenu = new IconContextMenu(floatButton);
+
+    contextMenu.addContextItem(VaadinIcon.PLUS, "New", e -> UI.getCurrent().getPage().open("", "_blank"));
+    contextMenu.addContextItem(VaadinIcon.PENCIL, "Edit", e -> UI.getCurrent().navigate("", Param.with("p", paste.getPasteId()).build()));
+    contextMenu.addContextItem(VaadinIcon.COPY, "Copy", e -> clipboard.copyCode(paste, null));
+    contextMenu.addContextItem(VaadinIcon.COG, "Settings", e -> settingsDialog.open());
+    contextMenu.addContextItem(VaadinIcon.INFO_CIRCLE_O, "Info", e -> infoDialog.open());
+
+    add(floatButton);
+
+    Resolution.addResize((height, width) -> {
+      if(width > 800) {
+        // PC
+        menuLayout.setVisible(true);
+        floatButton.setVisible(false);
+      } else {
+        // Mobile
+        menuLayout.setVisible(false);
+        floatButton.setVisible(true);
+      }
+    });
   }
 
   @Override
