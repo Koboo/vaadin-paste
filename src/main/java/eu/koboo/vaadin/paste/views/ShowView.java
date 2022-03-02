@@ -65,9 +65,8 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     newButton.addClassName("button");
     newButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     newButton.getElement().setProperty("title", "New (CTRL + S)");
-    newButton.addClickListener(e -> UI.getCurrent().navigate(""));
+    newButton.addClickListener(e -> UI.getCurrent().getPage().open("", "_blank"));
     Shortcuts.addShortcutListener(this, newButton::clickInClient, Key.KEY_S, KeyModifier.CONTROL);
-
 
     Button editButton = new Button(VaadinIcon.PENCIL.create());
     editButton.addClassName("button");
