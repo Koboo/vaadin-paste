@@ -26,6 +26,9 @@ import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
 import eu.koboo.vaadin.paste.utility.Cookies;
 import eu.koboo.vaadin.paste.utility.Date;
+import eu.koboo.vaadin.paste.utility.FloatButton;
+import eu.koboo.vaadin.paste.utility.IconContextMenu;
+import eu.koboo.vaadin.paste.utility.Resolution;
 import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.utility.Param;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
@@ -44,6 +47,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
   AceEditor editor;
   Clipboard clipboard;
   Dialog progressDialog;
+  ProgressBar progressBar;
 
   public PasteView(PasteService service) {
     this.service = service;
@@ -67,9 +71,11 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     progressDialog = new Dialog();
     progressDialog.setMaxWidth("400px");
     progressDialog.setWidthFull();
-    ProgressBar progressBar = new ProgressBar();
+
+    progressBar = new ProgressBar();
     progressBar.setWidthFull();
     progressBar.setIndeterminate(true);
+
     progressDialog.add(progressBar);
     progressDialog.addDialogCloseActionListener(e -> {
       if(progressBar.isIndeterminate()) {
@@ -81,40 +87,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     saveButton.addClassName("button");
     saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     saveButton.getElement().setProperty("title", "Save (CTRL + S)");
-    saveButton.addClickListener(e -> {
-      progressDialog.open();
-      editor.sync();
-      editor.addSyncCompletedListener(syncEvent -> {
-        editor.setReadOnly(true);
-        if (editor.isEmpty()) {
-          Notification n = new Notification();
-          n.addThemeVariants(NotificationVariant.LUMO_ERROR);
-          n.setText("Please submit some text, before saving!");
-          n.setDuration(2500);
-          n.open();
-          progressBar.setIndeterminate(false);
-          progressBar.setValue(1);
-          progressDialog.close();
-          editor.setReadOnly(false);
-          return;
-        }
-        Paste paste = new Paste(
-            UUID.randomUUID().toString(),
-            Base64.getEncoder().encodeToString(editor.getValue().getBytes()),
-            editor.getTheme(),
-            editor.getMode(),
-            LocalDate.now().format(Date.FORMATTER)
-        );
-        service.getRepository().save(paste);
-        clipboard.copyCode(paste, () -> {
-          progressBar.setIndeterminate(false);
-          progressBar.setValue(1);
-          UI.getCurrent().navigate("show", Param.with("p", paste.getPasteId()).build());
-          progressDialog.close();
-        });
-
-      });
-    });
+    saveButton.addClickListener(e -> savePaste());
     Shortcuts.addShortcutListener(this, saveButton::clickInClient, Key.KEY_S, KeyModifier.CONTROL);
 
     Button settingsButton = new Button(VaadinIcon.COG.create());
@@ -140,6 +113,27 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
 
     add(menuLayout);
     addAndExpand(editor);
+
+    FloatButton floatButton = new FloatButton(VaadinIcon.ELLIPSIS_DOTS_V.create());
+    IconContextMenu contextMenu = new IconContextMenu(floatButton);
+
+    contextMenu.addContextItem(VaadinIcon.DISC, "Save", e -> savePaste());
+    contextMenu.addContextItem(VaadinIcon.COG, "Settings", e -> settingsDialog.open());
+    contextMenu.addContextItem(VaadinIcon.INFO_CIRCLE_O, "Info", e -> infoDialog.open());
+
+    add(floatButton);
+
+    Resolution.addResize((height, width) -> {
+      if(width > 800) {
+        // PC
+        menuLayout.setVisible(true);
+        floatButton.setVisible(false);
+      } else {
+        // Mobile
+        menuLayout.setVisible(false);
+        floatButton.setVisible(true);
+      }
+    });
   }
 
   @Override
@@ -166,5 +160,41 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     editor.setValue(text);
     editor.setMode(paste.getMode());
     editor.setTheme(paste.getTheme());
+  }
+
+  private void savePaste() {
+
+    progressDialog.open();
+    editor.sync();
+    editor.addSyncCompletedListener(syncEvent -> {
+      editor.setReadOnly(true);
+      if (editor.isEmpty()) {
+        Notification n = new Notification();
+        n.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        n.setText("Please submit some text, before saving!");
+        n.setDuration(2500);
+        n.open();
+        progressBar.setIndeterminate(false);
+        progressBar.setValue(1);
+        progressDialog.close();
+        editor.setReadOnly(false);
+        return;
+      }
+      Paste paste = new Paste(
+          UUID.randomUUID().toString(),
+          Base64.getEncoder().encodeToString(editor.getValue().getBytes()),
+          editor.getTheme(),
+          editor.getMode(),
+          LocalDate.now().format(Date.FORMATTER)
+      );
+      service.getRepository().save(paste);
+      clipboard.copyCode(paste, () -> {
+        progressBar.setIndeterminate(false);
+        progressBar.setValue(1);
+        UI.getCurrent().navigate("show", Param.with("p", paste.getPasteId()).build());
+        progressDialog.close();
+      });
+
+    });
   }
 }
