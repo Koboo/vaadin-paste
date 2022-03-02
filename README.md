@@ -4,9 +4,7 @@ This is a lightweight paste service. Built with Vaadin, Spring and MongoDB.
 
 ## Demo
 
-This is the demo application. Paste are saved for 2 weeks.
-
-[p.koboo.eu](https://p.koboo.eu/)
+Here is a [demo](https://p.koboo.eu). Pastes are temporarily saved for 2 weeks.
 
 ## Build and Run
 
