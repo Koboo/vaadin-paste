@@ -25,9 +25,6 @@ public class Paste {
   private final AceTheme theme;
 
   @NotNull
-  private final AceMode mode;
-
-  @NotNull
   private final String createdAt;
 
 }

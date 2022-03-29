@@ -1,4 +1,4 @@
-package eu.koboo.vaadin.paste.repository;
+package eu.koboo.vaadin.paste;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

@@ -23,7 +23,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     description = "Lightweight PasteService with Vaadin and MongoDB",
     iconPath = "images/logo.png",
     offlineResources = {"images/logo.png"})
-@NpmPackage(value = "line-awesome", version = "1.3.0")
 @EnableScheduling
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 

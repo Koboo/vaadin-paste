@@ -7,6 +7,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.enums.AceMode;
@@ -37,37 +38,22 @@ public class SettingsDialog extends Dialog {
     modeComboBox.addValueChangeListener(e -> editor.setMode(e.getValue()));
     add(modeComboBox);
 
-    ComboBox<AceTheme> themeComboBox = new ComboBox<>("Theme:");
-    themeComboBox.getElement().setProperty("title", "Change the presented theme of the paste.");
-    themeComboBox.setClearButtonVisible(false);
-    themeComboBox.setItems(AceTheme.values());
-    themeComboBox.setItemLabelGenerator(AceTheme::name);
-    themeComboBox.setValue(AceTheme.terminal);
-    themeComboBox.setWidthFull();
-    themeComboBox.addValueChangeListener(e -> editor.setTheme(e.getValue()));
-    add(themeComboBox);
-
     try {
       AceMode mode = AceMode.valueOf(Cookies.getCookieValue("PREF_MODE"));
       modeComboBox.setValue(mode);
-      AceTheme theme = AceTheme.valueOf(Cookies.getCookieValue("PREF_THEME"));
-      themeComboBox.setValue(theme);
     } catch (Exception e) {
       // Silent ignore
     }
 
-    Button cookieButton = new Button("Save to Cookies", VaadinIcon.CHECK.create());
+    Button cookieButton = new Button("Save as preferences", VaadinIcon.CHECK.create());
     cookieButton.getStyle().set("margin-top", "1rem");
     cookieButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
     cookieButton.setWidthFull();
     cookieButton.addClickListener(e -> {
-      Cookies.setCookie("PREF_THEME", themeComboBox.getValue().name(), 1_300_000);
       Cookies.setCookie("PREF_MODE", modeComboBox.getValue().name(), 1_300_000);
 
-      Notification n = new Notification();
+      Notification n = Notification.show("Settings saved!", 2500, Position.BOTTOM_STRETCH);
       n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-      n.setText("Settings saved to Cookies!");
-      n.setDuration(2500);
       n.open();
       close();
     });

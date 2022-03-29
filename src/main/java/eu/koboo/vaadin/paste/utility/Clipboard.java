@@ -2,6 +2,7 @@ package eu.koboo.vaadin.paste.utility;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import eu.koboo.vaadin.paste.repository.Paste;
 
@@ -35,10 +36,9 @@ public class Clipboard {
       }
       copyTo(domain + "show?p=" + paste.getPasteId());
 
-      Notification n = new Notification();
+      Notification n = Notification.show("Copied URL to your clipboard!", 2500,
+          Position.BOTTOM_STRETCH);
       n.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-      n.setText("Copied to Clipboard!");
-      n.setDuration(2500);
       n.open();
       if(callback != null) {
         callback.run();

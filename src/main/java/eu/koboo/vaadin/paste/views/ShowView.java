@@ -57,7 +57,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     editor.setAutoComplete(false);
     editor.setWrap(true);
     editor.addClassName("ace-editor");
-    editor.setTheme(AceTheme.terminal);
+    editor.setTheme(AceTheme.cobalt);
     editor.setMode(AceMode.java);
     editor.setInitialFocus(false);
     editor.setHighlightActiveLine(false);
@@ -88,7 +88,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     Button settingsButton = new Button(VaadinIcon.COG.create());
     settingsButton.addClassName("button");
     settingsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-    settingsButton.getElement().setProperty("title", "Settings (CTRL + ALT + S)");
+    settingsButton.getElement().setProperty("title", "Settings (CTRL + B)");
     SettingsDialog settingsDialog = new SettingsDialog(editor);
     settingsButton.addClickListener(e -> settingsDialog.open());
     Shortcuts.addShortcutListener(this, settingsButton::clickInClient, Key.KEY_B, KeyModifier.CONTROL);
@@ -148,7 +148,5 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     paste = optional.get();
     String text = new String(Base64.getDecoder().decode(paste.getText()), StandardCharsets.UTF_8);
     editor.setValue(text);
-    editor.setMode(paste.getMode());
-    editor.setTheme(paste.getTheme());
   }
 }
