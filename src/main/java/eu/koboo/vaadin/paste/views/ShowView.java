@@ -7,6 +7,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -17,6 +18,7 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.router.RouterLink;
 import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.enums.AceMode;
 import de.f0rce.ace.enums.AceTheme;
@@ -25,12 +27,14 @@ import eu.koboo.vaadin.paste.repository.PasteService;
 import eu.koboo.vaadin.paste.utility.Clipboard;
 import eu.koboo.vaadin.paste.utility.FloatButton;
 import eu.koboo.vaadin.paste.utility.IconContextMenu;
+import eu.koboo.vaadin.paste.utility.JavaScript;
 import eu.koboo.vaadin.paste.utility.Param;
 import eu.koboo.vaadin.paste.utility.Resolution;
 import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
 import eu.koboo.vaadin.paste.views.dialog.SettingsDialog;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Locale;
 import java.util.Optional;
 
 @PageTitle("Show")
@@ -78,6 +82,12 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     editButton.addClickListener(e -> UI.getCurrent().navigate("", Param.with("p", paste.getPasteId()).build()));
     Shortcuts.addShortcutListener(this, editButton::clickInClient, Key.KEY_E, KeyModifier.CONTROL);
 
+    Button rawButton = new Button(VaadinIcon.NEWSPAPER.create());
+    rawButton.addClassName("button");
+    rawButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    rawButton.getElement().setProperty("title", "Open raw Link");
+    rawButton.addClickListener(e -> JavaScript.redirectToRaw(paste.getPasteId()));
+
     Button copyButton = new Button(VaadinIcon.COPY.create());
     copyButton.addClassName("button");
     copyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -104,7 +114,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     HorizontalLayout menuLayout = new HorizontalLayout();
     menuLayout.setSpacing(false);
     menuLayout.addClassName("menu-layout");
-    menuLayout.add(newButton, editButton, copyButton, settingsButton, infoButton);
+    menuLayout.add(newButton, editButton, rawButton, copyButton, settingsButton, infoButton);
 
     add(menuLayout);
     addAndExpand(editor);
@@ -114,6 +124,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
 
     contextMenu.addContextItem(VaadinIcon.PLUS, "New", e -> UI.getCurrent().getPage().open("", "_blank"));
     contextMenu.addContextItem(VaadinIcon.PENCIL, "Edit", e -> UI.getCurrent().navigate("", Param.with("p", paste.getPasteId()).build()));
+    contextMenu.addContextItem(VaadinIcon.NEWSPAPER, "Raw", e -> JavaScript.redirectToRaw(paste.getPasteId()));
     contextMenu.addContextItem(VaadinIcon.COPY, "Copy", e -> clipboard.copyCode(paste, null));
     contextMenu.addContextItem(VaadinIcon.COG, "Settings", e -> settingsDialog.open());
     contextMenu.addContextItem(VaadinIcon.INFO_CIRCLE_O, "Info", e -> infoDialog.open());

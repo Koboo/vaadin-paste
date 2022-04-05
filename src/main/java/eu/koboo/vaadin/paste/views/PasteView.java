@@ -29,6 +29,7 @@ import eu.koboo.vaadin.paste.utility.Cookies;
 import eu.koboo.vaadin.paste.utility.Date;
 import eu.koboo.vaadin.paste.utility.FloatButton;
 import eu.koboo.vaadin.paste.utility.IconContextMenu;
+import eu.koboo.vaadin.paste.utility.JavaScript;
 import eu.koboo.vaadin.paste.utility.Param;
 import eu.koboo.vaadin.paste.utility.Resolution;
 import eu.koboo.vaadin.paste.views.dialog.InfoDialog;
@@ -76,8 +77,14 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     saveButton.addClassName("button");
     saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     saveButton.getElement().setProperty("title", "Save (CTRL + S)");
-    saveButton.addClickListener(e -> savePaste());
+    saveButton.addClickListener(e -> savePaste(false));
     Shortcuts.addShortcutListener(this, saveButton::clickInClient, Key.KEY_S, KeyModifier.CONTROL);
+
+    Button rawButton = new Button(VaadinIcon.NEWSPAPER.create());
+    rawButton.addClassName("button");
+    rawButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+    rawButton.getElement().setProperty("title", "Open raw Link");
+    rawButton.addClickListener(e -> savePaste(true));
 
     Button settingsButton = new Button(VaadinIcon.COG.create());
     settingsButton.addClassName("button");
@@ -99,7 +106,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     HorizontalLayout menuLayout = new HorizontalLayout();
     menuLayout.setSpacing(false);
     menuLayout.addClassName("menu-layout");
-    menuLayout.add(saveButton, settingsButton, infoButton);
+    menuLayout.add(saveButton, rawButton, settingsButton, infoButton);
 
     add(menuLayout);
     addAndExpand(editor);
@@ -107,7 +114,8 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     FloatButton floatButton = new FloatButton(VaadinIcon.ELLIPSIS_DOTS_V.create());
     IconContextMenu contextMenu = new IconContextMenu(floatButton);
 
-    contextMenu.addContextItem(VaadinIcon.DISC, "Save", e -> savePaste());
+    contextMenu.addContextItem(VaadinIcon.DISC, "Save", e -> savePaste(false));
+    contextMenu.addContextItem(VaadinIcon.NEWSPAPER, "Save Raw", e -> savePaste(true));
     contextMenu.addContextItem(VaadinIcon.COG, "Settings", e -> settingsDialog.open());
     contextMenu.addContextItem(VaadinIcon.INFO_CIRCLE_O, "Info", e -> infoDialog.open());
 
@@ -128,7 +136,6 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     });
     editor.addAceChangedListener(event -> {
       lastChangedValue.set(event.getValue());
-      System.out.println("Value changed: " + event.getValue());
     });
   }
 
@@ -154,7 +161,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     editor.setValue(text);
   }
 
-  private void savePaste() {
+  private void savePaste(boolean raw) {
     editor.setReadOnly(true);
     String value = lastChangedValue.get();
     if (value == null || value.equalsIgnoreCase("null") || value.trim().equalsIgnoreCase("")) {
@@ -175,6 +182,12 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
         LocalDate.now().format(Date.FORMATTER)
     );
     service.getRepository().save(paste);
-    clipboard.copyCode(paste, () -> UI.getCurrent().navigate("show", Param.with("p", paste.getPasteId()).build()));
+    clipboard.copyCode(paste, () -> {
+      if(raw) {
+        JavaScript.redirectToRaw(paste.getPasteId());
+      } else {
+        UI.getCurrent().navigate("show", Param.with("p", paste.getPasteId()).build());
+      }
+    });
   }
 }
