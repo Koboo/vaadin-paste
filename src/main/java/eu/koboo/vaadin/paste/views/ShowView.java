@@ -122,7 +122,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     FloatButton floatButton = new FloatButton(VaadinIcon.ELLIPSIS_DOTS_V.create());
     IconContextMenu contextMenu = new IconContextMenu(floatButton);
 
-    contextMenu.addContextItem(VaadinIcon.PLUS, "New", e -> UI.getCurrent().getPage().open("", "_blank"));
+    contextMenu.addContextItem(VaadinIcon.PLUS, "New", e -> UI.getCurrent().navigate(""));
     contextMenu.addContextItem(VaadinIcon.PENCIL, "Edit", e -> UI.getCurrent().navigate("", Param.with("p", paste.getPasteId()).build()));
     contextMenu.addContextItem(VaadinIcon.NEWSPAPER, "Raw", e -> JavaScript.redirectToRaw(paste.getPasteId()));
     contextMenu.addContextItem(VaadinIcon.COPY, "Copy", e -> clipboard.copyCode(paste, null));
