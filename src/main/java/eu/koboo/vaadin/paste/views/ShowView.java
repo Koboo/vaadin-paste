@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -55,6 +56,10 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     addClassName("paste-editor");
     setSizeFull();
 
+    Div blackDiv = new Div();
+    blackDiv.addClassName("black-overlay");
+    add(blackDiv);
+
     editor = new AceEditor();
     editor.setReadOnly(true);
     editor.setLiveAutocompletion(false);
@@ -72,7 +77,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     newButton.addClassName("button");
     newButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
     newButton.getElement().setProperty("title", "New (CTRL + S)");
-    newButton.addClickListener(e -> UI.getCurrent().getPage().open("", "_blank"));
+    newButton.addClickListener(e -> UI.getCurrent().navigate(""));
     Shortcuts.addShortcutListener(this, newButton::clickInClient, Key.KEY_S, KeyModifier.CONTROL);
 
     Button editButton = new Button(VaadinIcon.PENCIL.create());
@@ -88,21 +93,6 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     rawButton.getElement().setProperty("title", "Open raw Link");
     rawButton.addClickListener(e -> JavaScript.redirectToRaw(paste.getPasteId()));
 
-    Button copyButton = new Button(VaadinIcon.COPY.create());
-    copyButton.addClassName("button");
-    copyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-    copyButton.getElement().setProperty("title", "Copy Link (CTRL + C)");
-    copyButton.addClickListener(e -> clipboard.copyCode(paste, null));
-    Shortcuts.addShortcutListener(this, editButton::clickInClient, Key.KEY_C, KeyModifier.CONTROL);
-
-    Button settingsButton = new Button(VaadinIcon.COG.create());
-    settingsButton.addClassName("button");
-    settingsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-    settingsButton.getElement().setProperty("title", "Settings (CTRL + B)");
-    SettingsDialog settingsDialog = new SettingsDialog(editor);
-    settingsButton.addClickListener(e -> settingsDialog.open());
-    Shortcuts.addShortcutListener(this, settingsButton::clickInClient, Key.KEY_B, KeyModifier.CONTROL);
-
     Button infoButton = new Button(VaadinIcon.INFO_CIRCLE_O.create());
     infoButton.addClassName("button");
     infoButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -114,7 +104,7 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     HorizontalLayout menuLayout = new HorizontalLayout();
     menuLayout.setSpacing(false);
     menuLayout.addClassName("menu-layout");
-    menuLayout.add(newButton, editButton, rawButton, copyButton, settingsButton, infoButton);
+    menuLayout.add(newButton, editButton, rawButton, infoButton);
 
     add(menuLayout);
     addAndExpand(editor);
@@ -126,7 +116,6 @@ public class ShowView extends VerticalLayout implements AfterNavigationObserver 
     contextMenu.addContextItem(VaadinIcon.PENCIL, "Edit", e -> UI.getCurrent().navigate("", Param.with("p", paste.getPasteId()).build()));
     contextMenu.addContextItem(VaadinIcon.NEWSPAPER, "Raw", e -> JavaScript.redirectToRaw(paste.getPasteId()));
     contextMenu.addContextItem(VaadinIcon.COPY, "Copy", e -> clipboard.copyCode(paste, null));
-    contextMenu.addContextItem(VaadinIcon.COG, "Settings", e -> settingsDialog.open());
     contextMenu.addContextItem(VaadinIcon.INFO_CIRCLE_O, "Info", e -> infoDialog.open());
 
     add(floatButton);

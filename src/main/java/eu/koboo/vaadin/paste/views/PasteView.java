@@ -177,7 +177,7 @@ public class PasteView extends VerticalLayout implements AfterNavigationObserver
     }
     Paste paste = new Paste(
         id,
-        Base64.getEncoder().encodeToString(value.getBytes()),
+        Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8)),
         editor.getTheme(),
         LocalDate.now().format(Date.FORMATTER)
     );
